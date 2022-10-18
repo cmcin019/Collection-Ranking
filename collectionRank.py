@@ -34,7 +34,6 @@ class CollectionRank:
         self.dataset = None
         self.querieDataset = None
         self.stopwordLst = []
-        pass
 
     @staticmethod
     def read_and_parse_stopwords(self):
@@ -55,8 +54,6 @@ class CollectionRank:
         self.stopwordLst = raw_data_stopwords.replace('\t', '\n').split('\n')
 
         file.close()
-
-        pass
 
     @staticmethod
     def read_and_parse_queries(file):
@@ -87,25 +84,17 @@ class CollectionRank:
                 querietitleLst.append(querie.replace(
                     "<title> ", "").replace(" </title>", ""))
 
-                pass
-
             if "<querytweettime>" in querie: # Timestamp component 
 
                 # Append timestamp to designated list 
                 querytweettimeLst.append(querie.replace(
                     "<querytweettime> ", "").replace(" </querytweettime>", ""))
 
-                pass
-
             if "<num>" in querie: # Number component 
 
                 # Append number to designated list 
                 querytweetnum.append(
                     int(querie.replace("<num> Number: MB0", "").replace(" </num>", "")))
-
-                pass
-
-            pass
 
         file.close()
 
@@ -152,8 +141,6 @@ class CollectionRank:
                 lem = wn.lemmatize(low)
 
                 lst.append(lem)
-                pass
-            pass
 
         return lst
 
@@ -189,8 +176,6 @@ class CollectionRank:
         self.dataset.to_pickle('collection_cleaned.pickle')
 
         file.close()
-
-        pass
 
     @staticmethod
     def createQuerieDataset(self, str):
@@ -303,8 +288,6 @@ class CollectionRank:
             pt_predictions = torch.softmax(pt_outputs, dim=1).tolist()[0][1]
             newRankedDocs.append((rankedDocs[rankedDoc][0], pt_predictions))
 
-            pass
-
         newRankedDocs.sort(key=lambda a: a[1], reverse=True)
         return newRankedDocs
 
@@ -361,25 +344,19 @@ class CollectionRank:
             if tweetRank > 0.65 or not (itr > 4 or tweetRank < 0.5):
                 if msg == 'msg_clean':
                     testQuerie.extend(self.dataset.loc[[rankedDocs[itr][0]], [msg]][msg][0])
-                    pass
                 else:
                     query = query + " " + self.dataset.loc[[rankedDocs[itr][0]], [msg]][msg][0]
-                    pass
 
                 itr += 1
             else:
                 break
-            pass
 
         if msg == 'msg_clean':
             rankedDocs = CollectionRank.rankDocs(self, bm25, testQuerie)
-            pass
         elif tokenizer == None :
             rankedDocs = CollectionRank.top2vecProcess(self, pt_model, query_num)
-            pass
         else:
             rankedDocs = CollectionRank.bertCall(self, rankedDocs, tokenizer, query, device, pt_model)
-            pass
 
 
         return rankedDocs
@@ -393,14 +370,11 @@ class CollectionRank:
 
         if self.w2v != False :
             testQuerie = CollectionRank.addSynonyms_pair_of_words(testQuerie, model_CBOW)
-            pass
         rankedDocs = CollectionRank.rankDocs(self, bm25, testQuerie)
 
         if self.feedBack == True:
             rankedDocs = CollectionRank.relevanceFeedback(self, rankedDocs=rankedDocs, testQuerie=testQuerie, bm25=bm25, a=18, b=10, msg='msg_clean')
-            
-            pass
-        
+                    
         return rankedDocs
 
     @staticmethod
@@ -412,9 +386,6 @@ class CollectionRank:
             tweetId, tweetRank = rankedDocs[x]
             file.write(str(testQuerieNum) + "\tQ0\t" + tweetId +
                     "\t" + rank + "\t" + str(tweetRank) + "\tmyRun\n")
-            pass
-        pass 
-
 
     def bm25(self):
         
@@ -424,12 +395,8 @@ class CollectionRank:
         # for setSize in range(1):
             rankedDocs = CollectionRank.bm25Process(self, setSize, model_CBOW, bm25)
             CollectionRank.results(self, setSize, rankedDocs, file)
-            pass
 
         file.close()
-
-        pass
-
 
     def Bert(self):
 
@@ -451,14 +418,9 @@ class CollectionRank:
 
             if self.feedBack == True:
                 rankedDocs = CollectionRank.relevanceFeedback(self, rankedDocs=rankedDocs, bm25=bm25, tokenizer=tokenizer, query=query, device=device, pt_model=pt_model, a=0.99945, b=0.012, msg='msg')
-                pass
 
             CollectionRank.results(self, query_num, rankedDocs, file)
-            pass
-
         file.close()
-
-        pass
 
     def top2vec(self):
 
@@ -477,56 +439,18 @@ class CollectionRank:
 
             if self.feedBack == True:
                 rankedDocs = CollectionRank.relevanceFeedback(self, rankedDocs=rankedDocs, pt_model=model, query=query, query_num=query_num, a=0.5, b=0.4, msg='msg')
-                pass
 
             CollectionRank.results(self, query_num, rankedDocs, file)
  
-            pass
-
         file.close()
 
-
-        pass
-
-
-
     # End of class
-    pass
-
-
-
-
-
-
-
-
-
-
-
-
 
 def main():
 
     cr = CollectionRank(feedBack=True)
     cr.Bert()
     print("End of program")
-
-    pass
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # Call main function
 if __name__ == "__main__":
